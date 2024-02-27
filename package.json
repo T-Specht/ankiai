@@ -1,0 +1,45 @@
+{
+  "name": "ankiai-tauri1",
+  "private": true,
+  "version": "0.0.4",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.13.1",
+    "@tabler/icons-react": "^2.47.0",
+    "@tanstack/react-query": "^5.22.2",
+    "@tanstack/react-router": "^1.17.4",
+    "@tanstack/router-devtools": "^1.17.4",
+    "@tauri-apps/api": "^1.5.2",
+    "@uidotdev/usehooks": "^2.4.1",
+    "axios": "^1.6.7",
+    "dayjs": "^1.11.10",
+    "framer-motion": "^11.0.6",
+    "langchain": "^0.1.21",
+    "langsmith": "^0.1.6",
+    "lexical": "^0.13.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "@tanstack/router-vite-plugin": "^1.16.5",
+    "@tauri-apps/cli": "^1.5.8",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "daisyui": "^4.7.2",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.0"
+  }
+}
