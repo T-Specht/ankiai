@@ -1,11 +1,13 @@
 import { AICard } from "../utils/card_chain";
 import { ClickableDivider } from "./ClickableDivider";
 import { CardDisplay } from "./CardDisplay";
-import { useAppContext } from "./AppContextProvider";
+// import { useAppContext } from "./AppContextProvider";
 import { KbdShortcut } from "./KbdShortcut";
+import { useCardsStore } from "./AppContextProvider";
 
 export function CardsList() {
-  const { cards } = useAppContext();
+  // const { cards } = useAppContext();
+  const cards = useCardsStore.use.cards();
 
   const groupCardsByTimestamp = (cards: AICard[]) => {
     return cards.reduce<{ timestamp: number; cards: AICard[] }[]>((g, c) => {

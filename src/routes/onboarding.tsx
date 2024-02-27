@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAppContext } from "../components/AppContextProvider";
+import { useSettingsStore } from "../components/AppContextProvider";
 import { useState } from "react";
 import { KbdShortcut } from "../components/KbdShortcut";
 import { KeyInput } from "../components/KeyInput";
@@ -11,7 +11,9 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 function Onboarding() {
-  const { setOnboardingComplete, openAIKey } = useAppContext();
+  //const { setOnboardingComplete, openAIKey } = useAppContext();
+  const setOnboardingComplete = useSettingsStore.use.setOnboardingComplete();
+  const openAIKey = useSettingsStore.use.openAIKey();
   const nav = useNavigate();
 
   const [step, setStep] = useState(0);
@@ -105,7 +107,7 @@ function Onboarding() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: "-100%", scale: 0.8 }}
           transition={{
-            duration: 0.1
+            duration: 0.1,
           }}
         >
           <div className="m-auto">{steps[step]}</div>

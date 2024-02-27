@@ -3,7 +3,7 @@ import { generateCardsAI } from "../utils/card_chain";
 import { useMutation } from "@tanstack/react-query";
 
 import { LoadingIndicator } from "./LoadingIndicator";
-import { useAppContext } from "./AppContextProvider";
+//import { useAppContext } from "./AppContextProvider";
 import { CardsList } from "./CardsList";
 import { DeleteAllCardsButton } from "./DeleteAllCardsButton";
 import { register, unregister } from "@tauri-apps/api/globalShortcut";
@@ -11,10 +11,17 @@ import { readText } from "@tauri-apps/api/clipboard";
 import { AnimatePresence, motion } from "framer-motion";
 import { AddToAnkiButton } from "./AddToAnkiButton";
 import { Container, NavBar } from "../routes/_with_navbar";
+import { useCardsStore, useSettingsStore } from "./AppContextProvider";
 
 export const CardCreator: React.FunctionComponent = () => {
-  const { openAIKey, addCards, promptTemplates, primaryLanguage } =
-    useAppContext();
+  // const { openAIKey, addCards, promptTemplates, primaryLanguage } =
+  //   useAppContext();
+
+    const addCards = useCardsStore.use.addCards();
+    const openAIKey = useSettingsStore.use.openAIKey();
+    const promptTemplates = useSettingsStore.use.promptTemplates();
+    const primaryLanguage = useSettingsStore.use.primaryLanguage();
+    
 
   const [currentGenerations, setCurrentGenerations] = useState(0);
 

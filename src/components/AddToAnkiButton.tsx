@@ -2,14 +2,15 @@ import { IconCheck, IconLayoutGridAdd, IconX } from "@tabler/icons-react";
 import { useRef } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useAppContext } from "./AppContextProvider";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { confirm } from "@tauri-apps/api/dialog";
 import { Link } from "@tanstack/react-router";
 import { addAnkiNotes, getAnkiAPIVersion } from "../utils/anki";
+import { useCardsStore } from "./AppContextProvider";
 
 export function AddToAnkiButton() {
-  const { cards, setCards } = useAppContext();
+  const cards = useCardsStore.use.cards();
+  const setCards = useCardsStore.use.setCards();
   const [deck, setDeck] = useLocalStorage("deck", "AnkiAi");
   const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -73,7 +74,11 @@ export function AddToAnkiButton() {
                   </label>
                   <button
                     className="btn btn-primary"
-                    disabled={deck == "" || cards.length == 0 || ankiAddCardsToDeck.isPending}
+                    disabled={
+                      deck == "" ||
+                      cards.length == 0 ||
+                      ankiAddCardsToDeck.isPending
+                    }
                     onClick={() => {
                       ankiAddCardsToDeck.mutate();
                     }}
@@ -84,7 +89,6 @@ export function AddToAnkiButton() {
               </div>
             ) : (
               <>
-                
                 <div className="flex items-center gap-2">
                   <IconX className="text-red-600"></IconX>
                   <div>
@@ -93,7 +97,9 @@ export function AddToAnkiButton() {
                   </div>
                 </div>
                 <Link to="/anki-connect-setup">
-                  <button className="btn mt-5 btn-primary">Setup & Instructions</button>
+                  <button className="btn mt-5 btn-primary">
+                    Setup & Instructions
+                  </button>
                 </Link>
               </>
             )}

@@ -1,9 +1,11 @@
 import { IconTrash } from "@tabler/icons-react";
-import { useAppContext } from "./AppContextProvider";
+// import { useAppContext } from "./AppContextProvider";
 import { confirm } from "@tauri-apps/api/dialog";
+import { useCardsStore } from "./AppContextProvider";
 
 export function DeleteAllCardsButton() {
-  const { setCards } = useAppContext();
+  // const { setCards } = useAppContext();
+  const setCards = useCardsStore.use.setCards();
   return (
     <button
       className="btn btn-error btn-xs"

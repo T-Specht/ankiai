@@ -3,8 +3,9 @@ import { AICard, updateAnkiCard, ChangedAICards } from "../utils/card_chain";
 import { useMutation } from "@tanstack/react-query";
 import { IconReload, IconTrash } from "@tabler/icons-react";
 import { Editor } from "./Editor";
-import { useAppContext } from "./AppContextProvider";
+// import { useAppContext } from "./AppContextProvider";
 import { confirm } from "@tauri-apps/api/dialog";
+import { useCardsStore, useSettingsStore } from "./AppContextProvider";
 
 const ChangeCardDialog = forwardRef<
   HTMLDialogElement,
@@ -15,7 +16,9 @@ const ChangeCardDialog = forwardRef<
   }
 >((props, ref) => {
   const [changeRequest, setChangeRequest] = useState("");
-  const { promptTemplates, primaryLanguage } = useAppContext();
+  // const { promptTemplates, primaryLanguage } = useAppContext();
+  const primaryLanguage = useSettingsStore.use.primaryLanguage();
+  const promptTemplates = useSettingsStore.use.promptTemplates();
 
   const changeCardMutation = useMutation({
     mutationFn: (action: string) => {
@@ -58,7 +61,8 @@ const ChangeCardDialog = forwardRef<
           {[
             {
               name: "Split",
-              action: "split the card up into multiple cards. Make sure that the answer is not included in the question.",
+              action:
+                "split the card up into multiple cards if possible but do not repeat the questions.",
             },
             {
               name: "More detail",
@@ -96,7 +100,12 @@ export const CardDisplay: React.FunctionComponent<{
   card: AICard;
 }> = ({ card }) => {
   const changeModal = useRef<HTMLDialogElement>(null);
-  const { changeCard, openAIKey, removeCard, addCards } = useAppContext();
+  //sconst { changeCard, openAIKey, removeCard, addCards } = useAppContext();
+
+  const changeCard = useCardsStore.use.changeCard();
+  const removeCard = useCardsStore.use.removeCard();
+  const addCards = useCardsStore.use.addCards();
+  const openAIKey = useSettingsStore.use.openAIKey();
 
   return (
     <div className="card bg-base-100 dark:bg-neutral shadow-xl  dark:border-none border rounded-md">

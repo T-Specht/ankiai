@@ -1,19 +1,25 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { KeyInput } from "../../components/KeyInput";
-import { useAppContext } from "../../components/AppContextProvider";
+// import { useAppContext } from "../../components/AppContextProvider";
 import { DEFAULT_PROMPT_TEMPLATES } from "../../utils/card_chain";
+import { useSettingsStore } from "../../components/AppContextProvider";
 
 export const Route = createFileRoute("/_with_navbar/settings")({
   component: Index,
 });
 
 function Index() {
-  const {
-    promptTemplates: queries,
-    setPromptTemplates: setQueries,
-    primaryLanguage,
-    setPrimaryLanguage,
-  } = useAppContext();
+  // const {
+  //   promptTemplates: queries,
+  //   setPromptTemplates: setQueries,
+  //   primaryLanguage,
+  //   setPrimaryLanguage,
+  // } = useAppContext();
+
+  const primaryLanguage = useSettingsStore.use.primaryLanguage();
+  const setPrimaryLanguage = useSettingsStore.use.setPrimaryLanguage();
+  const promptTemplates = useSettingsStore.use.promptTemplates();
+  const setPromptTemplates = useSettingsStore.use.setPromptTemplates();
 
   return (
     <div className="space-y-3">
@@ -53,11 +59,11 @@ function Index() {
             />
           </label>
 
-          {Object.entries(queries).map(([key, value]) => {
+          {Object.entries(promptTemplates).map(([key, value]) => {
             const defaultValue: string = (DEFAULT_PROMPT_TEMPLATES as any)[key];
 
             const setValue = (newValue: string) =>
-              setQueries({ ...queries, [key]: newValue });
+              setPromptTemplates({ ...promptTemplates, [key]: newValue });
 
             return (
               <div key={key} className="my-4">

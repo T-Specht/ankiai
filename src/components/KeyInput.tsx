@@ -1,7 +1,9 @@
-import { useAppContext } from "./AppContextProvider";
+import { useSettingsStore } from "./AppContextProvider";
 
 export function KeyInput() {
-  const { openAIKey, setOpenAIKey } = useAppContext();
+  // const { openAIKey, setOpenAIKey } = useAppContext();
+  const openAIKey = useSettingsStore.use.openAIKey();
+  const setOpenAIKey = useSettingsStore.use.setOpenAIKey();
 
   return (
     <>
