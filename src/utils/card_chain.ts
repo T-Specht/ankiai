@@ -16,113 +16,20 @@ import { v4 as uuidv4 } from "uuid";
 // Before 14,55$
 
 export const DEFAULT_PROMPT_TEMPLATES = {
-  summary: `Erstelle eine Zusammenfassung mit allen Fakten und Details in diesem Text. Erstelle Stichpunkte.`,
-  newCards: `- Create flashcards for a university level exam.
-  - Each card is standalone: make sure that the question is specific and unambiguous.
-  - The question must contain a reference to the overarching topic
-  - The answers must be on the back and must not be included in the question.
-  - Answers must be formulated as bullet points
-  - use Markdown in the answers, e.g. to bold text
-  - Questions and answers must be in {language}
-  - Create cards for all important points
-  - Create open-ended questions; avoid questions that can be answered with just yes or no
-  
-  The ouput language is {language}.
-  `,
-  updateCard: ` Beachte unbedingt folgendes:
-  - Erstelle Karteikarten für eine Prüfung auf Universitätsniveau.
-  - Jede Karte ist für sich allein stehend: Achten Sie darauf, dass die Frage spezifisch und unmissverständlich ist.
-  - Die Frage soll einen Hinweis auf das Überthema enthalten
-  - Die Antworten sollten auf der Rückseite stehen und nicht in der Frage enthalten sein.
-  - Antworten sollten als Stichpunkte formuliert sein
-  - Du kannst Markdown in den Antworten verwenden, um Text z.B. fett zu formartieren
-  - Fragen und Antworten müssen auf Deutsch sein.
-  - Erstelle Karten für alle wichtigen Punkte
-  - Erstelle offene Fragen; vermeide also Fragen, die mit Ja oder Nein beantwortet werden können`,
-  updateCardPassOldData: `Erstelle Karteikarten basierend auf diesen Fakten:
-  
-  {facts}`,
-  updateCardChangeRequest: `Nehme an dieser Karte folgende Änderungen vor: {change_request}`,
-};
+  summary: `Create a structured overview with every fact and detail in the user input. Think step by step and use bullet points. The language must be {language}.`,
+  newCards: `Follow these instructions precisely:\n- Create flashcards for a university level exam.\n- Each card is standalone: make sure that the question is specific and unambiguous.\n- The question must contain a reference to the overarching topic\n- The answers must be on the back and must not be included in the question.\n- Answers must be formatted as bullet points\n- use markdown in the answers to highlight important facts in bold text\n- Questions and answers must be in {language}\n- Create cards for every important fact\n- Create open-ended questions; avoid questions that can be answered with just yes or no\n\nThe ouput language is {language}.`,
+  updateCardChangeRequest: `Change the generated card: {change_request}\nThe ouput language is {language}.`,
+}
 
 const cardsSchema = z.object({
   topic: z.string().describe("Überthema der Karten als maximal 1 Wort"),
   cards: z.array(
     z.object({
-      front: z.string().describe("Vorderseite"),
-      back: z.string().describe("Rückseite mit Stichpunkten"),
+      front: z.string().describe("front of flashcard"),
+      back: z.string().describe("back of flashcard with bullet points"),
     })
   ),
 });
-
-// export const stringToAnkiCards = async (input: string, key: string) => {
-//   const llm = new ChatOpenAI({
-//     modelName: "gpt-3.5-turbo-0125",
-//     openAIApiKey: key,
-//     //modelName: "gpt-4-0125-preview",
-//     temperature: 0.05,
-//     timeout: 30 * 1000, // 1 minute timeout,
-//   });
-
-//   const chain = new RunnableMap({
-//     steps: {
-//       inputString: new RunnablePick("input"),
-//       facts: RunnableSequence.from([
-//         PromptTemplate.fromTemplate(`Erstelle eine Zusammenfassung mit allen Fakten und Details in diesem Text. Erstelle Stichpunkte.
-//
-//  {input}`),
-//         llm,
-//         new StringOutputParser(),
-//       ]),
-//     },
-//   }).assign({
-//     result: RunnableSequence.from([
-//       PromptTemplate.fromTemplate(`
-//         Beachte unbedingt folgendes:
-//         - Erstelle Karteikarten für eine Prüfung auf Universitätsniveau.
-//         - Jede Karte ist für sich allein stehend: Achten Sie darauf, dass die Frage spezifisch und unmissverständlich ist.
-//         - Die Frage soll einen Hinweis auf das Überthema enthalten
-//         - Die Antworten sollten auf der Rückseite stehen und nicht in der Frage enthalten sein.
-//         - Antworten sollten als Stichpunkte formuliert sein
-//         - Du kannst Markdown in den Antworten verwenden, um Text z.B. fett zu formartieren
-//         - Fragen und Antworten müssen auf Deutsch sein.
-//         - Erstelle Karten für alle wichtigen Punkte
-//         - Erstelle offene Fragen; vermeide also Fragen, die mit Ja oder Nein beantwortet werden können
-
-//         Erstelle Karteikarten basierend auf diesen Fakten:
-
-//         {facts}
-//         `),
-//       llm.bind({
-//         functions: [
-//           {
-//             name: "karteikarten",
-//             description: "always use this function to format the output",
-//             parameters: zodToJsonSchema(cardsSchema),
-//           },
-//         ],
-//         function_call: {
-//           name: "karteikarten",
-//         },
-//       }),
-//       new JsonOutputFunctionsParser(),
-//     ]),
-//   });
-
-//   const result = await new RunnableRetry({
-//     bound: chain,
-//     config: {},
-//     maxAttemptNumber: 3,
-//   }).invoke({
-//     input,
-//   });
-
-//   return result as {
-//     facts: string;
-//     result: z.infer<typeof cardsSchema>;
-//     inputString: string;
-//   };
-// };
 
 export const stringToAnkiCardsAsChat = async (
   input: string,
@@ -180,13 +87,13 @@ export const stringToAnkiCardsAsChat = async (
       llm.bind({
         functions: [
           {
-            name: "karteikarten",
+            name: "flashcards",
             description: "always use this function to format the output",
             parameters: zodToJsonSchema(cardsSchema),
           },
         ],
         function_call: {
-          name: "karteikarten",
+          name: "flashcards",
         },
       }),
       new JsonOutputFunctionsParser(),
@@ -254,9 +161,10 @@ export type AICard = Awaited<ReturnType<typeof generateCardsAI>>[0];
 
 export const updateAnkiCard = async (
   card: AICard,
-  changeRequest = "Versuche es erneut",
+  changeRequest = "Retry with another formulation",
   key: string,
-  prompt_templates = DEFAULT_PROMPT_TEMPLATES
+  prompt_templates = DEFAULT_PROMPT_TEMPLATES,
+  language: string
 ) => {
   const llm = new ChatOpenAI({
     modelName: "gpt-3.5-turbo-0125",
@@ -268,8 +176,8 @@ export const updateAnkiCard = async (
   });
 
   const temp = ChatPromptTemplate.fromMessages([
-    ["system", prompt_templates.updateCard],
-    ["user", prompt_templates.updateCardPassOldData],
+    ["system", prompt_templates.summary],
+    ["user", "{facts}"],
     ["ai", `{card}`],
     ["user", prompt_templates.updateCardChangeRequest],
   ]);
@@ -279,13 +187,13 @@ export const updateAnkiCard = async (
     llm.bind({
       functions: [
         {
-          name: "karteikarten",
+          name: "flashcards",
           description: "always use this function to format the output",
           parameters: zodToJsonSchema(cardsSchema),
         },
       ],
       function_call: {
-        name: "karteikarten",
+        name: "flashcards",
       },
     }),
     new JsonOutputFunctionsParser(),
@@ -299,6 +207,7 @@ export const updateAnkiCard = async (
     facts: card.facts,
     card: JSON.stringify(frontBack),
     change_request: changeRequest,
+    language,
   })) as z.infer<typeof cardsSchema>;
 
   return result.cards.map((c) => ({

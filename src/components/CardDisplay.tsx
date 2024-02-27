@@ -15,7 +15,7 @@ const ChangeCardDialog = forwardRef<
   }
 >((props, ref) => {
   const [changeRequest, setChangeRequest] = useState("");
-  const { promptTemplates } = useAppContext();
+  const { promptTemplates, primaryLanguage } = useAppContext();
 
   const changeCardMutation = useMutation({
     mutationFn: (action: string) => {
@@ -23,7 +23,8 @@ const ChangeCardDialog = forwardRef<
         props.card,
         action,
         props.openAIKey,
-        promptTemplates
+        promptTemplates,
+        primaryLanguage
       );
     },
     onSettled(data) {
@@ -57,11 +58,11 @@ const ChangeCardDialog = forwardRef<
           {[
             {
               name: "Split",
-              action: "auf mehrere Karten aufteilen",
+              action: "split the card up into multiple cards. Make sure that the answer is not included in the question.",
             },
             {
               name: "More detail",
-              action: "bitte mehr Details",
+              action: "add more detail",
             },
           ].map((a) => (
             <button

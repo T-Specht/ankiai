@@ -10,7 +10,7 @@ export const ClickableDivider = (props: {
     const ref = useRef<HTMLDialogElement>(null);
     return (
         <>
-            <div className="divider divider-neutral mb-20">
+            <div className="divider divider-neutral my-20">
                 <div
                     className="text-center cursor-pointer"
                     onClick={() => ref.current!.showModal()}

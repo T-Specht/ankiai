@@ -8,7 +8,8 @@ export function DeleteAllCardsButton() {
     <button
       className="btn btn-error btn-xs"
       onClick={async () => {
-        if (await confirm("Wirklich alles löschen?")) setCards([]);
+        if (await confirm("Do you really want to delete all generated cards?"))
+          setCards([]);
       }}
     >
       <IconTrash size={15}></IconTrash>
