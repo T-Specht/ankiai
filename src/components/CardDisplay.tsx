@@ -3,7 +3,6 @@ import { AICard, updateAnkiCard, ChangedAICards } from "../utils/card_chain";
 import { useMutation } from "@tanstack/react-query";
 import { IconReload, IconTrash } from "@tabler/icons-react";
 import { Editor } from "./Editor";
-// import { useAppContext } from "./AppContextProvider";
 import { confirm } from "@tauri-apps/api/dialog";
 import { useCardsStore, useSettingsStore } from "./AppContextProvider";
 
@@ -100,7 +99,6 @@ export const CardDisplay: React.FunctionComponent<{
   card: AICard;
 }> = ({ card }) => {
   const changeModal = useRef<HTMLDialogElement>(null);
-  //sconst { changeCard, openAIKey, removeCard, addCards } = useAppContext();
 
   const changeCard = useCardsStore.use.changeCard();
   const removeCard = useCardsStore.use.removeCard();

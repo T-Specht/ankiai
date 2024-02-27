@@ -11,7 +11,6 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 function Onboarding() {
-  //const { setOnboardingComplete, openAIKey } = useAppContext();
   const setOnboardingComplete = useSettingsStore.use.setOnboardingComplete();
   const openAIKey = useSettingsStore.use.openAIKey();
   const nav = useNavigate();
