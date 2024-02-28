@@ -3,6 +3,7 @@ import { KeyInput } from "../../components/KeyInput";
 import { DEFAULT_PROMPT_TEMPLATES } from "../../utils/card_chain";
 import { useSettingsStore } from "../../components/AppZustand";
 import { useEffect, useRef } from "react";
+import { HotKeyRecorder } from "../../components/HotKeyRecorder";
 
 export const Route = createFileRoute("/_with_navbar/settings")({
   component: Index,
@@ -18,15 +19,15 @@ function PromptTextArea(props: {
 
   const adjustHeight = () => {
     if (ref.current) {
-      ref.current.style.height = "";
+      ref.current.style.height = ""; // needs to be unset first to make it smaller if necessary
       ref.current.style.height = ref.current.scrollHeight + "px";
     }
   };
 
   useEffect(() => {
     setTimeout(() => {
-      adjustHeight()
-    }, 2000)
+      adjustHeight();
+    }, 2000);
   }, []);
 
   return (
@@ -64,10 +65,22 @@ function Index() {
   const setPrimaryLanguage = useSettingsStore.use.setPrimaryLanguage();
   const promptTemplates = useSettingsStore.use.promptTemplates();
   const setPromptTemplates = useSettingsStore.use.setPromptTemplates();
+  const setGenerateHotkey = useSettingsStore.use.setGenerateHotkey();
+  const generateHotkey = useSettingsStore.use.generateHotkey();
 
   return (
     <div className="space-y-3">
       <KeyInput></KeyInput>
+
+      <div>
+        <div className="text-lg font-bold">Hotkey for card generation</div>
+        <HotKeyRecorder
+          currentKeys={generateHotkey}
+          onSave={(keys) => {
+            setGenerateHotkey(keys);
+          }}
+        ></HotKeyRecorder>
+      </div>
 
       <div>
         <Link to="/anki-connect-setup" className="btn no-underline">

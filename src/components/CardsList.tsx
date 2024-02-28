@@ -2,10 +2,11 @@ import { AICard } from "../utils/card_chain";
 import { ClickableDivider } from "./ClickableDivider";
 import { CardDisplay } from "./CardDisplay";
 import { KbdShortcut } from "./KbdShortcut";
-import { useCardsStore } from "./AppZustand";
+import { useCardsStore, useSettingsStore } from "./AppZustand";
 
 export function CardsList() {
   const cards = useCardsStore.use.cards();
+  const generateHotkey = useSettingsStore.use.generateHotkey();
 
   const groupCardsByTimestamp = (cards: AICard[]) => {
     return cards.reduce<{ timestamp: number; cards: AICard[] }[]>((g, c) => {
@@ -27,7 +28,7 @@ export function CardsList() {
     <div className="">
       {cards.length == 0 && (
         <p >
-          Press <KbdShortcut /> to generate new cards from text in your
+          Press <KbdShortcut keys={generateHotkey} /> to generate new cards from text in your
           clipboard.
         </p>
       )}

@@ -7,7 +7,12 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
-import { register, unregister } from "@tauri-apps/api/globalShortcut";
+import {
+  isRegistered,
+  register,
+  unregister,
+  unregisterAll,
+} from "@tauri-apps/api/globalShortcut";
 import { readText } from "@tauri-apps/api/clipboard";
 import { generateCardsAI } from "./utils/card_chain";
 import {
@@ -16,6 +21,7 @@ import {
   useSettingsStore,
 } from "./components/AppZustand";
 import { v4 as uuidV4 } from "uuid";
+import { toTauriStr } from "./components/KbdShortcut";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -53,10 +59,17 @@ const SHORTCUT = "CommandOrControl+Shift+K";
 
 // Clear all previous (unfinished) jobs on app start
 const { clearAllJobs } = useCardsStore.getState();
-clearAllJobs();
 
-unregister(SHORTCUT).then(() => {
-  register(SHORTCUT, async () => {
+const registerGeneratationShortCut = async (key: string[]) => {
+  const keyStr = toTauriStr(key);
+
+  // if (!(await isRegistered(keyStr))) {
+  // Skip this for now
+  // }
+
+  console.log("registering globalShort", keyStr);
+  await unregisterAll(); // For now, should only remove previous shortcut
+  await register(keyStr, async () => {
     const clipText = await readText();
     const { openAIKey, promptTemplates, primaryLanguage } =
       useSettingsStore.getState();
@@ -89,7 +102,15 @@ unregister(SHORTCUT).then(() => {
       removeJob(job.uuid);
     }
   });
+};
+
+const currentKey = useSettingsStore.getState().generateHotkey;
+registerGeneratationShortCut(currentKey);
+
+useSettingsStore.subscribe((state) => {
+  registerGeneratationShortCut(state.generateHotkey);
 });
+clearAllJobs();
 
 console.log(
   '👋 This message is being logged by "renderer.ts", included via Vite'

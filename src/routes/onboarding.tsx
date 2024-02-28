@@ -13,6 +13,7 @@ export const Route = createFileRoute("/onboarding")({
 function Onboarding() {
   const setOnboardingComplete = useSettingsStore.use.setOnboardingComplete();
   const openAIKey = useSettingsStore.use.openAIKey();
+  const generateHotkey = useSettingsStore.use.generateHotkey();
   const nav = useNavigate();
 
   const [step, setStep] = useState(0);
@@ -37,7 +38,7 @@ function Onboarding() {
             Copy the text you want to create Anki cards about into your cppboard
           </p>
           <p>
-            Press <KbdShortcut />
+            Press <KbdShortcut keys={generateHotkey} />
           </p>
           <p>AnkiAI will generate cards unsing ChatGPT 3.5 Turbo</p>
           <p>Edit the cards to fit your style</p>

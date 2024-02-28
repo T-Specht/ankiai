@@ -1,7 +1,7 @@
 import { useRef, useState, forwardRef } from "react";
 import { AICard, updateAnkiCard, ChangedAICards } from "../utils/card_chain";
 import { useMutation } from "@tanstack/react-query";
-import { IconReload, IconTrash } from "@tabler/icons-react";
+import { IconMessagePlus, IconTrash } from "@tabler/icons-react";
 import { Editor } from "./Editor";
 import { confirm } from "@tauri-apps/api/dialog";
 import {
@@ -119,14 +119,13 @@ export const CardDisplay: React.FunctionComponent<{
           <Editor
             inputMarkdown={card.front}
             prose={false}
-            key={`h-${card.uuid}-${futureStates.length}`}
+            key={`h-${card.uuid}-${futureStates.length}`} // Handle Zustand history change: this key is important because once mounted, the editor is uncontrolled and does not change its content based on inputMarkdown prop. This is only used for initialSetting
             onChange={(markdown) => changeCard(card.uuid, { front: markdown })}
           ></Editor>
         </h2>
         <div>
-          {/* <TailwindMarkdown markdownStr={card.back} /> */}
           <Editor
-            key={`b-${card.uuid}-${futureStates.length}`}
+            key={`b-${card.uuid}-${futureStates.length}`} // Handle Zustand history change: this key is important because once mounted, the editor is uncontrolled and does not change its content based on inputMarkdown prop. This is only used for initialSetting
             inputMarkdown={card.back}
             prose
             onChange={(markdown) => changeCard(card.uuid, { back: markdown })}
@@ -136,15 +135,15 @@ export const CardDisplay: React.FunctionComponent<{
           <div className="max-w-[50%] opacity-50 text-xs">{card.deck}</div>
           <div className="mr-auto"></div>
           <button
-            className="btn btn-outline btn-sm"
+            className="btn btn-sm"
             onClick={() => {
               changeModal.current!.showModal();
             }}
           >
-            <IconReload></IconReload>
+            <IconMessagePlus></IconMessagePlus>
           </button>
           <button
-            className="btn btn-outline btn-sm"
+            className="btn btn-sm"
             onClick={async () => {
               if (await confirm("Wirklich löschen?")) removeCard(card.uuid);
             }}

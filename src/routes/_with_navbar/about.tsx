@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { KbdShortcut } from "../../components/KbdShortcut";
+import { useSettingsStore } from "../../components/AppZustand";
 
 export const Route = createFileRoute("/_with_navbar/about")({
   component: About,
 });
 
 function About() {
+  const generateHotkey = useSettingsStore.use.generateHotkey();
+
   return (
     <div className="prose mx-auto">
       <div className="grid grid-cols-2 items-center md:gap-6 md:grid-cols-3">
@@ -35,7 +38,8 @@ function About() {
         preferences before seamlessly integrating them into your Anki decks.
         This blend of automation and customization not only saves time but also
         ensures that your study materials are precisely tailored to your needs.
-        <br /><br />
+        <br />
+        <br />
         It's like having a knowledgeable study partner who provides insightful
         suggestions, but ultimately leaves the final decision-making in your
         hands. So whether you're studying for exams, learning a new language, or
@@ -49,7 +53,7 @@ function About() {
           Copy the text you want to create Anki cards about into your clipboard
         </li>
         <li>
-          Press <KbdShortcut />
+          Press <KbdShortcut keys={generateHotkey} />
         </li>
         <li>AnkiAI will generate cards</li>
         <li>Edit the cards</li>

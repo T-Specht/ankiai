@@ -24,23 +24,41 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
   return store;
 };
 
-type SetterFunction<T> = (input: T) => unknown;
-interface SettingsStore {
-  openAIKey: string;
-  setOpenAIKey: SetterFunction<string>;
-  promptTemplates: typeof DEFAULT_PROMPT_TEMPLATES;
-  primaryLanguage: string;
-  setPromptTemplates: SetterFunction<typeof DEFAULT_PROMPT_TEMPLATES>;
-  setPrimaryLanguage: SetterFunction<string>;
-  onboardingComplete: boolean;
-  setOnboardingComplete: SetterFunction<boolean>;
+type SetterFunction<T> = (newValue: T) => unknown;
+
+/*
+Returns a type like this with T as type of value and name as propertyKey
+{
+  [name]: T,
+  [setName]: (newValue: T) => unkown
 }
+*/
+type ValueAndSetter<Name extends string, T> = {
+  [Key in Name]: T;
+} & {
+  [Key in `set${Capitalize<Name>}`]: SetterFunction<T>;
+};
+
+// Reformats Union Type to look nicer as object Type
+type CastToObjectType<UType extends { [key: string]: unknown }> = {
+  [T in keyof UType]: UType[T];
+};
+
+type SettingsStore = CastToObjectType<
+  ValueAndSetter<"openAIKey", string> &
+    ValueAndSetter<"promptTemplates", typeof DEFAULT_PROMPT_TEMPLATES> &
+    ValueAndSetter<"primaryLanguage", string> &
+    ValueAndSetter<"generateHotkey", string[]> &
+    ValueAndSetter<"onboardingComplete", boolean> & {}
+>;
 
 export const useSettingsStoreBase = create<SettingsStore>()(
   persist(
     (set) => ({
       openAIKey: "",
       setOpenAIKey: (key) => set({ openAIKey: key }),
+      generateHotkey: ["mod", "shift", "k"],
+      setGenerateHotkey: (hotkey) => set({ generateHotkey: hotkey }),
       primaryLanguage: "German",
       setPrimaryLanguage: (l) => set({ primaryLanguage: l }),
       promptTemplates: DEFAULT_PROMPT_TEMPLATES,
@@ -63,18 +81,18 @@ export interface CardJob {
   timestamp: number;
 }
 
-interface CardsStore {
-  cards: AICard[];
-  currentJobs: CardJob[];
-  addJob(job: CardJob): unknown;
-  removeJob(uuid: string): unknown;
-  clearAllJobs(): unknown;
-  setCards: SetterFunction<AICard[]>;
-  changeCard: (uuid: string, updateField: Partial<AICard>) => unknown;
-  addCards: (cards: AICard[]) => unknown;
-  removeCard: (uuid: string) => unknown;
-  removeCardAndAddChangedVersions: (uuid: string, cards: AICard[]) => unknown;
-}
+type CardsStore = CastToObjectType<
+  ValueAndSetter<"cards", AICard[]> & {
+    currentJobs: CardJob[];
+    addJob(job: CardJob): unknown;
+    removeJob(uuid: string): unknown;
+    clearAllJobs(): unknown;
+    changeCard: (uuid: string, updateField: Partial<AICard>) => unknown;
+    addCards: (cards: AICard[]) => unknown;
+    removeCard: (uuid: string) => unknown;
+    removeCardAndAddChangedVersions: (uuid: string, cards: AICard[]) => unknown;
+  }
+>;
 
 export const useCardsStoreBase = create<CardsStore>()(
   persist(
@@ -114,9 +132,11 @@ export const useCardsStoreBase = create<CardsStore>()(
           set((state) => {
             const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
             if (cardIndex >= 0) {
-              state.cards.splice(cardIndex, 1);
+              // This removes the item at the index and adds the cards afer that
+              state.cards.splice(cardIndex, 1, ...cards);
+            } else {
+              state.cards.push(...cards);
             }
-            state.cards.push(...cards);
           }),
         removeCard: (uuid) =>
           set((state) => {
