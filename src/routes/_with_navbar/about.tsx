@@ -10,7 +10,7 @@ function About() {
   const generateHotkey = useSettingsStore.use.generateHotkey();
 
   return (
-    <div className="prose mx-auto">
+    <div className="prose mx-auto text-foreground prose-headings:text-foreground">
       <div className="grid grid-cols-2 items-center md:gap-6 md:grid-cols-3">
         <div className="col-span-2">
           <h1>Welcome to AnkiAI 🤖</h1>

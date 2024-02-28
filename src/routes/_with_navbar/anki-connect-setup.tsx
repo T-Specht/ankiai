@@ -2,6 +2,8 @@ import { IconCheck, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { invokeAnki } from "../../utils/anki";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/_with_navbar/anki-connect-setup")({
   component: Index,
@@ -50,8 +52,7 @@ function Index() {
           </div>
           <div className="mt-3">
             {!ankiRequestPermission.isSuccess && (
-              <button
-                className="btn btn-primary"
+              <Button
                 onClick={async () => {
                   try {
                     await ankiRequestPermission
@@ -62,25 +63,31 @@ function Index() {
               >
                 Try to request permission{" "}
                 {ankiRequestPermission.failureCount > 0 && "again"}
-              </button>
+              </Button>
             )}
             {ankiRequestPermission.isSuccess && (
               <div>
-                <div role="alert" className="alert alert-success my-3">
-                  <IconCheck></IconCheck>
-                  <span>Successful! You are all set!</span>
-                </div>
-                <Link to="/" className="btn no-underline">
-                  Go to card creator
-                </Link>
+                <Alert className="bg-green-600">
+                  <IconCheck className="h-4 w-4"></IconCheck>
+                  <AlertTitle>Success!</AlertTitle>
+                  <AlertDescription>
+                    Successful! You are all set!
+                  </AlertDescription>
+                </Alert>
+                <Button asChild className="mt-3">
+                  <Link to="/">Go to card creator</Link>
+                </Button>
               </div>
             )}
             {ankiRequestPermission.isError && (
               <div>
-                <div role="alert" className="alert alert-error my-3">
-                  <IconX />
-                  <span>Permission request failed.</span>
-                </div>
+                <Alert className="bg-red-600 my-3">
+                  <IconX className="h-4 w-4"></IconX>
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    Permission request failed.
+                  </AlertDescription>
+                </Alert>
 
                 <div>
                   <h3>Apparently, there is a problem. </h3>

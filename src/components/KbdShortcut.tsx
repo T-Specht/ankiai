@@ -60,7 +60,9 @@ export const KbdShortcut = (props: { keys: string[] }) => {
         return (
           <span key={`${k}-${i}`}>
             {i != 0 && <span>+</span>}
-            <kbd className="text-base-content kbd">{keySymbol}</kbd>
+            <kbd className="text-base-content bg-secondary py-2 px-2 text-secondary-foreground shadow-xs rounded border">
+              {keySymbol}
+            </kbd>
           </span>
         );
       })}

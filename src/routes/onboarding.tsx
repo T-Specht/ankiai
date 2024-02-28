@@ -5,6 +5,8 @@ import { KbdShortcut } from "../components/KbdShortcut";
 import { KeyInput } from "../components/KeyInput";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -72,26 +74,28 @@ function Onboarding() {
         cards.
       </p>
 
-      <button
+      <Button
         onClick={() => {
           setOnboardingComplete(true);
           nav({
             to: "/",
           });
         }}
-        className="btn btn-primary"
         disabled={openAIKey == ""}
       >
         Get started!
-      </button>
+      </Button>
 
       {openAIKey == "" && (
-        <div role="alert" className="alert alert-warning mt-10 text-sm">
-          <IconAlertTriangle />
-          <span>
-            Before continuing, you need to enter an OpenAI API Key on the
-            previous step.
-          </span>
+        <div className="text-left mt-3">
+          <Alert>
+            <IconAlertTriangle className="h-4 w-4" />
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              Before continuing, you need to enter an OpenAI API Key on the
+              previous step.
+            </AlertDescription>
+          </Alert>
         </div>
       )}
     </div>,
@@ -115,20 +119,19 @@ function Onboarding() {
       </AnimatePresence>
 
       <div className="fixed bottom-0 left-0 w-full p-10 flex justify-between">
-        <button
-          className="btn"
+        <Button
+          variant="secondary"
           disabled={step == 0}
           onClick={() => setStep(step - 1)}
         >
           Previous
-        </button>
-        <button
-          className="btn btn-primary"
+        </Button>
+        <Button
           disabled={step == steps.length - 1}
           onClick={() => setStep(step + 1)}
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

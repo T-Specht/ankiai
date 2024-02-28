@@ -2,10 +2,10 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const NavBar = (props: { children?: React.ReactNode }) => {
   return (
-    <div className="flex border-b dark:border-neutral fixed w-full top-0 left-0 bg-base-100 z-20">
+    <div className="flex border-b fixed w-full top-0 left-0 bg-background z-20">
       <div className="flex gap-2 p-2 px-4 mx-auto container flex-wrap">
         <Link to="/" className="[&.active]:font-bold">
-          CardCreator
+          🤖 CardCreator
         </Link>
         <Link to="/about" className="[&.active]:font-bold">
           About
@@ -20,7 +20,7 @@ export const NavBar = (props: { children?: React.ReactNode }) => {
 };
 
 export const Container = (props: { children: React.ReactNode }) => {
-  return <div className="container p-4 mx-auto mt-16">{props.children}</div>;
+  return <div className="container p-4 mt-16">{props.children}</div>;
 };
 
 export const Route = createFileRoute("/_with_navbar")({

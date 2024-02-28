@@ -1,28 +1,25 @@
-import {
-  EditorState,
-  EditorThemeClasses
-} from "lexical";
+import { EditorState, EditorThemeClasses } from "lexical";
 import { useState } from "react";
 
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
+import { CodeNode } from "@lexical/code";
+import { LinkNode } from "@lexical/link";
+import { ListItemNode, ListNode } from "@lexical/list";
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
   TRANSFORMERS,
 } from "@lexical/markdown";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { CodeNode } from "@lexical/code";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { LinkNode } from "@lexical/link";
 
 const theme: EditorThemeClasses = {
   root: "focus:outline-none",
@@ -79,7 +76,7 @@ export function Editor(props: {
   };
 
   return (
-    <div className={props.prose ? "prose text-base-content" : ""}>
+    <div className={props.prose ? "prose text-foreground" : ""}>
       <LexicalComposer
         initialConfig={{
           namespace: "MyEditor",

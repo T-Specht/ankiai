@@ -1,9 +1,19 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@radix-ui/react-label";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { useSettingsStore } from "../../components/AppZustand";
+import { HotKeyRecorder } from "../../components/HotKeyRecorder";
 import { KeyInput } from "../../components/KeyInput";
 import { DEFAULT_PROMPT_TEMPLATES } from "../../utils/card_chain";
-import { useSettingsStore } from "../../components/AppZustand";
-import { useEffect, useRef } from "react";
-import { HotKeyRecorder } from "../../components/HotKeyRecorder";
 
 export const Route = createFileRoute("/_with_navbar/settings")({
   component: Index,
@@ -32,30 +42,26 @@ function PromptTextArea(props: {
 
   return (
     <div className="my-4">
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">
-            <b>{props.promptKey}</b>{" "}
-            {props.value.trim() !== props.defaultValue.trim() && (
-              <button
-                className="btn btn-xs"
-                onClick={() => props.setValue(props.defaultValue)}
-              >
-                Reset
-              </button>
-            )}
-          </span>
-        </div>
-        <textarea
-          className="textarea textarea-bordered"
+      <div className="grid w-full gap-1.5">
+        <Label htmlFor="textarea">
+          <b>{props.promptKey}</b>{" "}
+          {props.value.trim() !== props.defaultValue.trim() && (
+            <Button onClick={() => props.setValue(props.defaultValue)}>
+              Reset
+            </Button>
+          )}
+        </Label>
+        <Textarea
+          placeholder="Prompt..."
+          id="textarea"
           ref={ref}
           value={props.value}
           onChange={(e) => {
             adjustHeight();
             props.setValue(e.target.value);
           }}
-        ></textarea>
-      </label>
+        />
+      </div>
     </div>
   );
 }
@@ -83,56 +89,61 @@ function Index() {
       </div>
 
       <div>
-        <Link to="/anki-connect-setup" className="btn no-underline">
-          Go to AnkiConnect setup
-        </Link>
+        <Button asChild>
+          <Link to="/anki-connect-setup">Go to AnkiConnect setup</Link>
+        </Button>
       </div>
 
       <div>
-        <Link to="/onboarding" className="btn no-underline">
-          Go to onboarding
-        </Link>
+        <Button asChild>
+          <Link to="/onboarding">Go to onboarding</Link>
+        </Button>
       </div>
 
-      <details className="collapse bg-base-200">
-        <summary className="collapse-title text-xl font-medium">
-          Prompt Templates
-          <p className="text-xs">Click to expand. Modify at your own risk.</p>
-        </summary>
-        <div className="collapse-content">
-          <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text">
-                <b>Primary language</b>
+      <Accordion type="single" collapsible className="bg-secondary px-4 py-2 rounded-md">
+        <AccordionItem value="templates">
+          <AccordionTrigger>
+            <div>
+              Prompt Templates
+              <span className="ml-2 text-xs">
+                Click to expand. Modify at your own risk.
               </span>
             </div>
-            <input
-              type="text"
-              placeholder="English, for example"
-              className="input input-bordered w-full max-w-xs"
-              value={primaryLanguage}
-              onChange={(e) => setPrimaryLanguage(e.target.value)}
-            />
-          </label>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="input">Primary language</Label>
+                <Input
+                  type="text"
+                  placeholder="English, for example"
+                  id="input"
+                  value={primaryLanguage}
+                  onChange={(e) => setPrimaryLanguage(e.target.value)}
+                />
+              </div>
+              {Object.entries(promptTemplates).map(([key, value]) => {
+                const defaultValue: string = (DEFAULT_PROMPT_TEMPLATES as any)[
+                  key
+                ];
 
-          {Object.entries(promptTemplates).map(([key, value]) => {
-            const defaultValue: string = (DEFAULT_PROMPT_TEMPLATES as any)[key];
+                const setValue = (newValue: string) =>
+                  setPromptTemplates({ ...promptTemplates, [key]: newValue });
 
-            const setValue = (newValue: string) =>
-              setPromptTemplates({ ...promptTemplates, [key]: newValue });
-
-            return (
-              <PromptTextArea
-                key={key}
-                promptKey={key}
-                defaultValue={defaultValue}
-                setValue={setValue}
-                value={value}
-              ></PromptTextArea>
-            );
-          })}
-        </div>
-      </details>
+                return (
+                  <PromptTextArea
+                    key={key}
+                    promptKey={key}
+                    defaultValue={defaultValue}
+                    setValue={setValue}
+                    value={value}
+                  ></PromptTextArea>
+                );
+              })}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }

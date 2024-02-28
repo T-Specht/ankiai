@@ -22,6 +22,7 @@ import {
 } from "./components/AppZustand";
 import { v4 as uuidV4 } from "uuid";
 import { toTauriStr } from "./components/KbdShortcut";
+import { ThemeProvider } from "./components/ui/ThemeProvider";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -42,7 +43,9 @@ const MainComponent = () => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         {/* <div data-tauri-drag-region className="title-bar fixed w-full h-7 bg-base-100 top-0 left-0 z-10 shadow-sm"></div> */}
-        <RouterProvider router={router} />
+        <ThemeProvider defaultTheme="system" storageKey="ui_theme">
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>
   );

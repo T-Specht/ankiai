@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useRecordHotkeys } from "react-hotkeys-hook";
 import { KbdShortcut } from "./KbdShortcut";
-import { useState } from "react";
+import { Button } from "./ui/button";
 
 export function HotKeyRecorder(props: {
   currentKeys: string[];
@@ -13,8 +14,9 @@ export function HotKeyRecorder(props: {
 
   return (
     <div>
-      <button
-        className={`btn btn-xs ${isRecording ? "btn-error" : "btn"}`}
+      <Button
+        variant={isRecording ? "destructive" : "secondary"}
+        size="xs"
         onClick={() => {
           if (isRecording) stop();
           else start();
@@ -28,7 +30,7 @@ export function HotKeyRecorder(props: {
         ) : (
           "Click to record"
         )}
-      </button>
+      </Button>
       <div className="mt-3">
         <div>
           {currentKeys == null ? (
@@ -40,10 +42,11 @@ export function HotKeyRecorder(props: {
           )}
         </div>
         {keys.size > 0 && (
-          <div className="mt-2">
+          <div className="mt-4">
             New hotkey: <KbdShortcut keys={[...keys]}></KbdShortcut>
-            <button
-              className="btn btn-xs btn-primary ml-4"
+            <Button
+              size="xs"
+              className="ml-4"
               onClick={() => {
                 if (isRecording) stop();
                 props.onSave([...keys]);
@@ -52,16 +55,18 @@ export function HotKeyRecorder(props: {
               }}
             >
               Save shortcut
-            </button>
-            <button
-              className="btn btn-xs ml-2"
+            </Button>
+            <Button
+              size="xs"
+              variant="secondary"
+              className="ml-2"
               onClick={() => {
                 if (isRecording) stop();
                 resetKeys();
               }}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         )}
       </div>

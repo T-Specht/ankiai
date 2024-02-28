@@ -1,12 +1,13 @@
-import { LoadingIndicator } from "./LoadingIndicator";
+import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Container, NavBar } from "../routes/_with_navbar";
+import { AddToAnkiButton } from "./AddToAnkiButton";
+import { useCardsStore, useTemporalCardsStore } from "./AppZustand";
 import { CardsList } from "./CardsList";
 import { DeleteAllCardsButton } from "./DeleteAllCardsButton";
-import { AnimatePresence, motion } from "framer-motion";
-import { AddToAnkiButton } from "./AddToAnkiButton";
-import { Container, NavBar } from "../routes/_with_navbar";
-import { useCardsStore, useTemporalCardsStore } from "./AppZustand";
-import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
-import { useHotkeys } from "react-hotkeys-hook";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { Button } from "./ui/button";
 
 export const CardCreator: React.FunctionComponent = () => {
   const currentJobs = useCardsStore.use.currentJobs();
@@ -23,24 +24,26 @@ export const CardCreator: React.FunctionComponent = () => {
         <div className="ml-auto"></div>
         <AddToAnkiButton></AddToAnkiButton>
         <DeleteAllCardsButton></DeleteAllCardsButton>
-        <button
-          className="btn btn-xs"
+        <Button
+          size="xs"
+          variant="secondary"
           disabled={pastStates.length == 0}
           onClick={() => {
             undo();
           }}
         >
           <IconArrowBackUp size={15} />
-        </button>
-        <button
-          className="btn btn-xs"
+        </Button>
+        <Button
+          size="xs"
+          variant="secondary"
           disabled={futureStates.length == 0}
           onClick={() => {
             redo();
           }}
         >
           <IconArrowForwardUp size={15} />
-        </button>
+        </Button>
       </NavBar>
       <Container>
         <AnimatePresence>
