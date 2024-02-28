@@ -1,20 +1,21 @@
-
 import { LoadingIndicator } from "./LoadingIndicator";
 import { CardsList } from "./CardsList";
 import { DeleteAllCardsButton } from "./DeleteAllCardsButton";
 import { AnimatePresence, motion } from "framer-motion";
 import { AddToAnkiButton } from "./AddToAnkiButton";
 import { Container, NavBar } from "../routes/_with_navbar";
-import {
-  useCardsStore, useTemporalCardsStore
-} from "./AppZustand";
+import { useCardsStore, useTemporalCardsStore } from "./AppZustand";
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export const CardCreator: React.FunctionComponent = () => {
   const currentJobs = useCardsStore.use.currentJobs();
   const { futureStates, pastStates, redo, undo } = useTemporalCardsStore(
     (state) => state
   );
+
+  useHotkeys("mod+z", () => undo());
+  useHotkeys("mod+shift+z", () => redo());
 
   return (
     <>

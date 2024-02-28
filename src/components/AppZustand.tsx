@@ -3,10 +3,10 @@ import { create, useStore } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 import { StoreApi, UseBoundStore } from "zustand";
-import { produce } from "immer";
 import { TemporalState, temporal } from "zundo";
 import deepEqual from "fast-deep-equal";
 import { throttle } from "throttle-debounce";
+import { immer } from "zustand/middleware/immer";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
   ? S & { use: { [K in keyof T]: () => T[K] } }
@@ -68,6 +68,7 @@ interface CardsStore {
   currentJobs: CardJob[];
   addJob(job: CardJob): unknown;
   removeJob(uuid: string): unknown;
+  clearAllJobs(): unknown;
   setCards: SetterFunction<AICard[]>;
   changeCard: (uuid: string, updateField: Partial<AICard>) => unknown;
   addCards: (cards: AICard[]) => unknown;
@@ -78,62 +79,53 @@ interface CardsStore {
 export const useCardsStoreBase = create<CardsStore>()(
   persist(
     temporal(
-      (set) => ({
+      immer((set) => ({
         cards: [],
         currentJobs: [],
+        clearAllJobs: () =>
+          set((state) => {
+            state.currentJobs = [];
+          }),
         addJob: (job) =>
-          set(
-            produce((c: CardsStore) => {
-              c.currentJobs.push(job);
-            })
-          ),
+          set((state) => {
+            state.currentJobs.push(job);
+          }),
         removeJob: (uuid) =>
-          set(
-            produce((c: CardsStore) => {
-              const index = c.currentJobs.findIndex((j) => j.uuid == uuid);
-              if (index >= 0) c.currentJobs.splice(index, 1);
-            })
-          ),
-        setCards: (c) => set({ cards: c }),
-        addCards: (c) =>
-          set(
-            produce((state: CardsStore) => {
-              state.cards.push(...c);
-              // return state;
-            })
-          ),
-        changeCard: (uuid, fields) =>
-          set(
-            produce((state: CardsStore) => {
-              const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
+          set((state) => {
+            const index = state.currentJobs.findIndex((j) => j.uuid == uuid);
+            if (index >= 0) state.currentJobs.splice(index, 1);
+          }),
 
-              if (cardIndex >= 0) {
-                const card = state.cards[cardIndex];
-                state.cards[cardIndex] = { ...card, ...fields };
-              }
-              // return state;
-            })
-          ),
+        setCards: (cards) => set({ cards }),
+        addCards: (c) =>
+          set((state) => {
+            state.cards.push(...c);
+          }),
+        changeCard: (uuid, fields) =>
+          set((state) => {
+            const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
+
+            if (cardIndex >= 0) {
+              const card = state.cards[cardIndex];
+              state.cards[cardIndex] = { ...card, ...fields };
+            }
+          }),
         removeCardAndAddChangedVersions: (uuid, cards) =>
-          set(
-            produce((state: CardsStore) => {
-              const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
-              if (cardIndex >= 0) {
-                state.cards.splice(cardIndex, 1);
-              }
-              state.cards.push(...cards);
-            })
-          ),
+          set((state) => {
+            const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
+            if (cardIndex >= 0) {
+              state.cards.splice(cardIndex, 1);
+            }
+            state.cards.push(...cards);
+          }),
         removeCard: (uuid) =>
-          set(
-            produce((state: CardsStore) => {
-              const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
-              if (cardIndex >= 0) {
-                state.cards.splice(cardIndex, 1);
-              }
-            })
-          ),
-      }),
+          set((state) => {
+            const cardIndex = state.cards.findIndex((c) => c.uuid == uuid);
+            if (cardIndex >= 0) {
+              state.cards.splice(cardIndex, 1);
+            }
+          }),
+      })),
       {
         limit: 20,
         handleSet: (handleSet) =>

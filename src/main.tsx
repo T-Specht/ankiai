@@ -51,6 +51,10 @@ root.render(<MainComponent></MainComponent>);
 
 const SHORTCUT = "CommandOrControl+Shift+K";
 
+// Clear all previous (unfinished) jobs on app start
+const { clearAllJobs } = useCardsStore.getState();
+clearAllJobs();
+
 unregister(SHORTCUT).then(() => {
   register(SHORTCUT, async () => {
     const clipText = await readText();
