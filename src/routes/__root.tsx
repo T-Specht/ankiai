@@ -1,7 +1,7 @@
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useEffect } from "react";
-import { useSettingsStore } from "../components/AppContextProvider";
+import { useSettingsStore } from "../components/AppZustand";
 
 export const Route = createRootRoute({
   component: () => {

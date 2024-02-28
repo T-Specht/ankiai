@@ -2,7 +2,7 @@ import { AICard } from "../utils/card_chain";
 import { ClickableDivider } from "./ClickableDivider";
 import { CardDisplay } from "./CardDisplay";
 import { KbdShortcut } from "./KbdShortcut";
-import { useCardsStore } from "./AppContextProvider";
+import { useCardsStore } from "./AppZustand";
 
 export function CardsList() {
   const cards = useCardsStore.use.cards();

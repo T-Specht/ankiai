@@ -4,7 +4,11 @@ import { useMutation } from "@tanstack/react-query";
 import { IconReload, IconTrash } from "@tabler/icons-react";
 import { Editor } from "./Editor";
 import { confirm } from "@tauri-apps/api/dialog";
-import { useCardsStore, useSettingsStore } from "./AppContextProvider";
+import {
+  useCardsStore,
+  useSettingsStore,
+  useTemporalCardsStore,
+} from "./AppZustand";
 
 const ChangeCardDialog = forwardRef<
   HTMLDialogElement,
@@ -102,8 +106,11 @@ export const CardDisplay: React.FunctionComponent<{
 
   const changeCard = useCardsStore.use.changeCard();
   const removeCard = useCardsStore.use.removeCard();
-  const addCards = useCardsStore.use.addCards();
+  const removeCardAndAddChangedVersions =
+    useCardsStore.use.removeCardAndAddChangedVersions();
   const openAIKey = useSettingsStore.use.openAIKey();
+
+  const { futureStates } = useTemporalCardsStore((state) => state);
 
   return (
     <div className="card bg-base-100 dark:bg-neutral shadow-xl  dark:border-none border rounded-md">
@@ -112,12 +119,14 @@ export const CardDisplay: React.FunctionComponent<{
           <Editor
             inputMarkdown={card.front}
             prose={false}
+            key={`h-${card.uuid}-${futureStates.length}`}
             onChange={(markdown) => changeCard(card.uuid, { front: markdown })}
           ></Editor>
         </h2>
         <div>
           {/* <TailwindMarkdown markdownStr={card.back} /> */}
           <Editor
+            key={`b-${card.uuid}-${futureStates.length}`}
             inputMarkdown={card.back}
             prose
             onChange={(markdown) => changeCard(card.uuid, { back: markdown })}
@@ -148,8 +157,7 @@ export const CardDisplay: React.FunctionComponent<{
           card={card}
           openAIKey={openAIKey}
           handleCardChange={(cards) => {
-            removeCard(card.uuid);
-            addCards(cards);
+            removeCardAndAddChangedVersions(card.uuid, cards);
           }}
         ></ChangeCardDialog>
       </div>

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSettingsStore } from "../components/AppContextProvider";
+import { useSettingsStore } from "../components/AppZustand";
 import { useState } from "react";
 import { KbdShortcut } from "../components/KbdShortcut";
 import { KeyInput } from "../components/KeyInput";

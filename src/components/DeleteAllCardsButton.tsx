@@ -1,6 +1,6 @@
 import { IconTrash } from "@tabler/icons-react";
 import { confirm } from "@tauri-apps/api/dialog";
-import { useCardsStore } from "./AppContextProvider";
+import { useCardsStore } from "./AppZustand";
 
 export function DeleteAllCardsButton() {
   const setCards = useCardsStore.use.setCards();

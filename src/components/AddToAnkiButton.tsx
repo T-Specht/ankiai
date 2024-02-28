@@ -6,7 +6,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { confirm } from "@tauri-apps/api/dialog";
 import { Link } from "@tanstack/react-router";
 import { addAnkiNotes, getAnkiAPIVersion } from "../utils/anki";
-import { useCardsStore } from "./AppContextProvider";
+import { useCardsStore } from "./AppZustand";
 
 export function AddToAnkiButton() {
   const cards = useCardsStore.use.cards();

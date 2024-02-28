@@ -1,4 +1,4 @@
-import { useSettingsStore } from "./AppContextProvider";
+import { useSettingsStore } from "./AppZustand";
 
 export function KeyInput() {
   const openAIKey = useSettingsStore.use.openAIKey();

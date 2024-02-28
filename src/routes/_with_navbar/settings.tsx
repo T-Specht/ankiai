@@ -1,14 +1,65 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { KeyInput } from "../../components/KeyInput";
 import { DEFAULT_PROMPT_TEMPLATES } from "../../utils/card_chain";
-import { useSettingsStore } from "../../components/AppContextProvider";
+import { useSettingsStore } from "../../components/AppZustand";
+import { useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/_with_navbar/settings")({
   component: Index,
 });
 
-function Index() {
+function PromptTextArea(props: {
+  defaultValue: string;
+  setValue: (str: string) => unknown;
+  promptKey: string;
+  value: string;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
 
+  const adjustHeight = () => {
+    if (ref.current) {
+      ref.current.style.height = "";
+      ref.current.style.height = ref.current.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      adjustHeight()
+    }, 2000)
+  }, []);
+
+  return (
+    <div className="my-4">
+      <label className="form-control">
+        <div className="label">
+          <span className="label-text">
+            <b>{props.promptKey}</b>{" "}
+            {props.value.trim() !== props.defaultValue.trim() && (
+              <button
+                className="btn btn-xs"
+                onClick={() => props.setValue(props.defaultValue)}
+              >
+                Reset
+              </button>
+            )}
+          </span>
+        </div>
+        <textarea
+          className="textarea textarea-bordered"
+          ref={ref}
+          value={props.value}
+          onChange={(e) => {
+            adjustHeight();
+            props.setValue(e.target.value);
+          }}
+        ></textarea>
+      </label>
+    </div>
+  );
+}
+
+function Index() {
   const primaryLanguage = useSettingsStore.use.primaryLanguage();
   const setPrimaryLanguage = useSettingsStore.use.setPrimaryLanguage();
   const promptTemplates = useSettingsStore.use.promptTemplates();
@@ -36,7 +87,6 @@ function Index() {
           <p className="text-xs">Click to expand. Modify at your own risk.</p>
         </summary>
         <div className="collapse-content">
-          
           <label className="form-control w-full max-w-xs">
             <div className="label">
               <span className="label-text">
@@ -59,30 +109,13 @@ function Index() {
               setPromptTemplates({ ...promptTemplates, [key]: newValue });
 
             return (
-              <div key={key} className="my-4">
-                <label className="form-control">
-                  <div className="label">
-                    <span className="label-text">
-                      <b>{key}</b>{" "}
-                      {value.trim() !== defaultValue.trim() && (
-                        <button
-                          className="btn btn-xs"
-                          onClick={() => setValue(defaultValue)}
-                        >
-                          Reset
-                        </button>
-                      )}
-                    </span>
-                  </div>
-                  <textarea
-                    className="textarea textarea-bordered h-32"
-                    value={value}
-                    onChange={(e) => {
-                      setValue(e.target.value);
-                    }}
-                  ></textarea>
-                </label>
-              </div>
+              <PromptTextArea
+                key={key}
+                promptKey={key}
+                defaultValue={defaultValue}
+                setValue={setValue}
+                value={value}
+              ></PromptTextArea>
             );
           })}
         </div>
