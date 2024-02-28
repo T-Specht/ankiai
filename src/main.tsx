@@ -1,5 +1,10 @@
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification,
+} from "@tauri-apps/api/notification";
 
 import "./index.css";
 
@@ -7,12 +12,7 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
-import {
-  isRegistered,
-  register,
-  unregister,
-  unregisterAll,
-} from "@tauri-apps/api/globalShortcut";
+import { register, unregister } from "@tauri-apps/api/globalShortcut";
 import { readText } from "@tauri-apps/api/clipboard";
 import { generateCardsAI } from "./utils/card_chain";
 import {
@@ -50,17 +50,63 @@ const MainComponent = () => {
 
 root.render(<MainComponent></MainComponent>);
 
-// window.api.onShortcut(async () => {
-//   console.log("shotrcut");
-//   console.log(await window.api.getClipboardText());
-// });
-
-const SHORTCUT = "CommandOrControl+Shift+K";
-
 // Clear all previous (unfinished) jobs on app start
 const { clearAllJobs } = useCardsStore.getState();
 
+// Check for notification permission
+isPermissionGranted().then(async (permissionGranted) => {
+  if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === "granted";
+  }
+});
+
+const newJob = async () => {
+  const clipText = await readText();
+  const { openAIKey, promptTemplates, primaryLanguage } =
+    useSettingsStore.getState();
+
+  const { addJob, removeJob, addCards } = useCardsStore.getState();
+
+  if (clipText) {
+    console.log(clipText);
+
+    const job: CardJob = {
+      input: clipText,
+      uuid: uuidV4(),
+      timestamp: Date.now(),
+    };
+
+    sendNotification({
+      title: "Generating new cards...",
+    });
+
+    try {
+      addJob(job);
+      const cards = await generateCardsAI(
+        clipText,
+        openAIKey,
+        promptTemplates,
+        primaryLanguage
+      );
+
+      console.log(cards);
+      sendNotification({
+        title: "New cards were generated.",
+        body: `${cards.length} new cards were added to your collection.`,
+      });
+
+      addCards(cards);
+    } catch (error) {}
+
+    removeJob(job.uuid);
+  }
+};
+
+let currentKey = useSettingsStore.getState().generateHotkey;
+
 const registerGeneratationShortCut = async (key: string[]) => {
+  const previousKey = toTauriStr(currentKey);
   const keyStr = toTauriStr(key);
 
   // if (!(await isRegistered(keyStr))) {
@@ -68,43 +114,12 @@ const registerGeneratationShortCut = async (key: string[]) => {
   // }
 
   console.log("registering globalShort", keyStr);
-  await unregisterAll(); // For now, should only remove previous shortcut
-  await register(keyStr, async () => {
-    const clipText = await readText();
-    const { openAIKey, promptTemplates, primaryLanguage } =
-      useSettingsStore.getState();
+  await unregister(previousKey);
+  await register(keyStr, newJob);
 
-    const { addJob, removeJob, addCards } = useCardsStore.getState();
-
-    if (clipText) {
-      console.log(clipText);
-
-      const job: CardJob = {
-        input: clipText,
-        uuid: uuidV4(),
-        timestamp: Date.now(),
-      };
-
-      try {
-        addJob(job);
-        const cards = await generateCardsAI(
-          clipText,
-          openAIKey,
-          promptTemplates,
-          primaryLanguage
-        );
-
-        console.log(cards);
-
-        addCards(cards);
-      } catch (error) {}
-
-      removeJob(job.uuid);
-    }
-  });
+  currentKey = key;
 };
 
-const currentKey = useSettingsStore.getState().generateHotkey;
 registerGeneratationShortCut(currentKey);
 
 useSettingsStore.subscribe((state) => {
