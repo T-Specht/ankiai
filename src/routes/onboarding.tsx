@@ -21,7 +21,7 @@ function Onboarding() {
   const [step, setStep] = useState(0);
 
   const steps = [
-    <div className="prose text-center">
+    <div className="prose dark:prose-invert text-center">
       <h1>Welcome to AnkiAI! 🤖</h1>
       <p>
         AnkiAI was build to use AI for Anki card creation while still maintaing
@@ -32,7 +32,7 @@ function Onboarding() {
       </p>
       <p></p>
     </div>,
-    <div className="prose text-center">
+    <div className="prose  dark:prose-invert text-center">
       <div className="grid grid-cols-2 items-center md:gap-6 md:grid-cols-3">
         <div className="col-span-2">
           <h1>It's simple!</h1>
@@ -55,7 +55,7 @@ function Onboarding() {
         </div>
       </div>
     </div>,
-    <div className="prose text-center">
+    <div className="prose dark:prose-invert text-center">
       <h1>Enter your OpenAI API Key</h1>
       <p>
         To use AnkiAI, you just need an OpenAI API Key and balance on your
@@ -63,7 +63,7 @@ function Onboarding() {
       </p>
       <KeyInput></KeyInput>
     </div>,
-    <div className="prose text-center">
+    <div className="prose dark:prose-invert text-center">
       <h1>All done!</h1>
 
       <p>Have fun with in the new era of Anki card creation! 🥳</p>

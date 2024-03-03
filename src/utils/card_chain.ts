@@ -13,13 +13,59 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { v4 as uuidv4 } from "uuid";
 
+const PRINCING_SCHEMA_PER_1000 = {
+  input: 0.0005,
+  output: 0.0015,
+};
+
+export interface AccumulatedCosts {
+  input: number;
+  output: number;
+  total: number;
+}
+
+const callbackCostCalc = [
+  {
+    handleLLMEnd(output: any) {
+      const tokenUsage = output.llmOutput?.tokenUsage as {
+        completionTokens: number;
+        promptTokens: number;
+        totalTokens: number;
+      };
+
+      console.log(tokenUsage);
+
+      const inputCost =
+        (tokenUsage.promptTokens * PRINCING_SCHEMA_PER_1000.input) / 1000;
+      const outputCost =
+        (tokenUsage.completionTokens * PRINCING_SCHEMA_PER_1000.output) / 1000;
+      const totalCost = inputCost + outputCost;
+
+      let accumulatedCosts = JSON.parse(
+        localStorage.getItem("accumulatedCosts") ||
+          '{"input": 0, "output": 0, "total": 0}'
+      );
+      let addedAccumulatedCosts = {
+        input: accumulatedCosts.input + inputCost,
+        output: accumulatedCosts.output + outputCost,
+        total: accumulatedCosts.total + totalCost,
+      };
+
+      localStorage.setItem(
+        "accumulatedCosts",
+        JSON.stringify(addedAccumulatedCosts)
+      );
+    },
+  },
+];
+
 // Before 14,55$
 
 export const DEFAULT_PROMPT_TEMPLATES = {
   summary: `Create a structured overview with every fact and detail in the user input. Think step by step and use bullet points. The language must be {language}.`,
   newCards: `Follow these instructions precisely:\n- Create flashcards for a university level exam.\n- Each card is standalone: make sure that the question is specific and unambiguous.\n- The question must contain a reference to the overarching topic\n- The answers must be on the back and must not be included in the question.\n- Answers must be formatted as bullet points\n- use markdown in the answers to highlight important facts in bold text\n- Questions and answers must be in {language}\n- Create cards for every important fact\n- Create open-ended questions; avoid questions that can be answered with just yes or no\n\nThe ouput language is {language}.`,
   updateCardChangeRequest: `Change the generated card: {change_request}\nThe ouput language is {language}.`,
-}
+};
 
 const cardsSchema = z.object({
   topic: z.string().describe("Überthema der Karten als maximal 1 Wort"),
@@ -39,6 +85,7 @@ export const stringToAnkiCardsAsChat = async (
 ) => {
   const llm = new ChatOpenAI({
     modelName: "gpt-3.5-turbo-0125",
+    callbacks: callbackCostCalc,
     openAIApiKey: key,
     //modelName: "gpt-4-0125-preview",
     temperature: 0.05,

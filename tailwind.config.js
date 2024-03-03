@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-    './**/*.html',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./**/*.html",
   ],
   prefix: "",
   theme: {
@@ -74,5 +74,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography'), require("tailwindcss-animate")],
-}
+  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
+};

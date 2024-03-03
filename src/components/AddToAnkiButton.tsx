@@ -16,7 +16,7 @@ import { addAnkiNotes, getAnkiAPIVersion } from "@/utils/anki";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { confirm } from "@tauri-apps/api/dialog";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from "usehooks-ts";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";

@@ -19,7 +19,7 @@ function Index() {
   const host = `${location.protocol}//${location.host}`;
 
   return (
-    <div className="prose mx-auto">
+    <div className="prose dark:prose-invert mx-auto">
       <h2>AnkiConnect Setup</h2>
       <p>
         AnkiAI uses AnkiConnect to add cards to Anki. For this, you need to

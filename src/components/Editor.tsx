@@ -76,7 +76,7 @@ export function Editor(props: {
   };
 
   return (
-    <div className={props.prose ? "prose text-foreground" : ""}>
+    <div className={props.prose ? "prose dark:prose-invert" : ""}>
       <LexicalComposer
         initialConfig={{
           namespace: "MyEditor",

@@ -14,6 +14,8 @@ import { useSettingsStore } from "../../components/AppZustand";
 import { HotKeyRecorder } from "../../components/HotKeyRecorder";
 import { KeyInput } from "../../components/KeyInput";
 import { DEFAULT_PROMPT_TEMPLATES } from "../../utils/card_chain";
+import { useDarkMode, useLocalStorage } from "usehooks-ts";
+import { IconMoon, IconSun } from "@tabler/icons-react";
 
 export const Route = createFileRoute("/_with_navbar/settings")({
   component: Index,
@@ -74,9 +76,61 @@ function Index() {
   const setGenerateHotkey = useSettingsStore.use.setGenerateHotkey();
   const generateHotkey = useSettingsStore.use.generateHotkey();
 
+  const [accumulatedCost, setAccumulatedCosts] = useLocalStorage(
+    "accumulatedCosts",
+    {
+      input: 0,
+      output: 0,
+      total: 0,
+    }
+  );
+
+  const { isDarkMode, toggle } = useDarkMode();
+
   return (
     <div className="space-y-3">
       <KeyInput></KeyInput>
+
+      <div>
+        <Button onClick={toggle}>
+          {isDarkMode ? (
+            <>
+              <IconSun size={15} className="mr-2"></IconSun>
+              Switch to light mode
+            </>
+          ) : (
+            <>
+              <IconMoon size={15} className="mr-2"></IconMoon>
+              Switch to dark mode
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div>
+        <div className="text-lg font-bold">Accumulated Costs</div>
+        <div>
+          <b>Input: </b>
+          {accumulatedCost.input}$
+        </div>
+        <div>
+          <b>Output: </b>
+          {accumulatedCost.output}$
+        </div>
+        <div>
+          <b>Total: </b>
+          {accumulatedCost.total}$
+        </div>
+        <div className="mt-3">
+          <Button
+            onClick={() =>
+              setAccumulatedCosts({ input: 0, output: 0, total: 0 })
+            }
+          >
+            Reset
+          </Button>
+        </div>
+      </div>
 
       <div>
         <div className="text-lg font-bold">Hotkey for card generation</div>
@@ -100,7 +154,11 @@ function Index() {
         </Button>
       </div>
 
-      <Accordion type="single" collapsible className="bg-secondary px-4 py-2 rounded-md">
+      <Accordion
+        type="single"
+        collapsible
+        className="bg-secondary px-4 py-2 rounded-md"
+      >
         <AccordionItem value="templates">
           <AccordionTrigger>
             <div>

@@ -11,7 +11,7 @@ import "./index.css";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { register, unregister } from "@tauri-apps/api/globalShortcut";
 import { readText } from "@tauri-apps/api/clipboard";
 import { generateCardsAI } from "./utils/card_chain";
@@ -22,7 +22,8 @@ import {
 } from "./components/AppZustand";
 import { v4 as uuidV4 } from "uuid";
 import { toTauriStr } from "./components/KbdShortcut";
-import { ThemeProvider } from "./components/ui/ThemeProvider";
+// import { ThemeProvider } from "./components/ui/ThemeProvider";
+import { useDarkMode } from "usehooks-ts";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -39,13 +40,20 @@ const queryClient = new QueryClient();
 const root = createRoot(document.getElementById("app")!);
 
 const MainComponent = () => {
+  const { isDarkMode } = useDarkMode();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+
+    root.classList.remove("light", "dark");
+
+    root.classList.add(isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
   return (
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        {/* <div data-tauri-drag-region className="title-bar fixed w-full h-7 bg-base-100 top-0 left-0 z-10 shadow-sm"></div> */}
-        <ThemeProvider defaultTheme="system" storageKey="ui_theme">
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </StrictMode>
   );
