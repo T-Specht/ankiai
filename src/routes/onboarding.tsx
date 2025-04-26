@@ -42,7 +42,7 @@ function Onboarding() {
           <p>
             Press <KbdShortcut keys={generateHotkey} />
           </p>
-          <p>AnkiAI will generate cards unsing ChatGPT 3.5 Turbo</p>
+          <p>AnkiAI will generate cards unsing ChatGPT 4o mini.</p>
           <p>Edit the cards to fit your style</p>
           <p>Add the cards to Anki</p>
         </div>

@@ -2,38 +2,30 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "AnkiAI",
-    "version": "../package.json"
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "copyright": "Tim Specht",
+    "publisher": "Tim Specht"
   },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "notification": {
-        "all": true
-      },
-      "clipboard": {
-        "all": true
-      },
-      "globalShortcut": {
-        "all": true
-      },
-      "window": {
-        "startDragging": true
-      },
-      "dialog": {
-        "all": true,
-        "ask": true,
-        "confirm": true,
-        "message": true
-      }
+  "productName": "AnkiAI",
+  "mainBinaryName": "AnkiAI",
+  "version": "../package.json",
+  "identifier": "io.specht.ankiai",
+  "plugins": {},
+  "app": {
+    "security": {
+      "csp": null
     },
     "windows": [
       {
@@ -41,25 +33,9 @@
         "width": 800,
         "height": 600,
         "minHeight": 200,
-        "minWidth": 300
+        "minWidth": 300,
+        "useHttpsScheme": true
       }
-    ],
-    "security": {
-      "csp": null
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "io.specht.ankiai",
-      "copyright": "Tim Specht",
-      "publisher": "Tim Specht",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-    }
+    ]
   }
 }

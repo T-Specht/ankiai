@@ -46,6 +46,7 @@ type CastToObjectType<UType extends { [key: string]: unknown }> = {
 
 type SettingsStore = CastToObjectType<
   ValueAndSetter<"openAIKey", string> &
+    ValueAndSetter<"modelName", string> &
     ValueAndSetter<"promptTemplates", typeof DEFAULT_PROMPT_TEMPLATES> &
     ValueAndSetter<"primaryLanguage", string> &
     ValueAndSetter<"generateHotkey", string[]> &
@@ -55,6 +56,8 @@ type SettingsStore = CastToObjectType<
 export const useSettingsStoreBase = create<SettingsStore>()(
   persist(
     (set) => ({
+      modelName: "gpt-4o-mini",
+      setModelName: (name) => set({ modelName: name }),
       openAIKey: "",
       setOpenAIKey: (key) => set({ openAIKey: key }),
       generateHotkey: ["mod", "shift", "k"],

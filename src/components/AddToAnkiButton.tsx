@@ -15,7 +15,7 @@ import {
 import { addAnkiNotes, getAnkiAPIVersion } from "@/utils/anki";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { confirm } from "@tauri-apps/api/dialog";
+import { confirm } from "@tauri-apps/plugin-dialog";
 import { useLocalStorage } from "usehooks-ts";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -60,8 +60,8 @@ export function AddToAnkiButton() {
         <DialogHeader>
           <DialogTitle>Add to Anki</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Add the current cards to Anki. Please make sure that the deck already exists
+            in Anki, as it will <b>not</b> be created automatically.
           </DialogDescription>
         </DialogHeader>
         <div className="">

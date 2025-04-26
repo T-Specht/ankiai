@@ -10,7 +10,7 @@ import {
   IconMessagePlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { confirm } from "@tauri-apps/api/dialog";
+import { confirm } from "@tauri-apps/plugin-dialog";
 import { useRef } from "react";
 import { AICard } from "../utils/card_chain";
 import {

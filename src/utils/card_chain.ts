@@ -18,6 +18,9 @@ const PRINCING_SCHEMA_PER_1000 = {
   output: 0.0015,
 };
 
+//const MODEL = "gpt-3.5-turbo-0125";
+//const MODEL = "gpt-4o";
+
 export interface AccumulatedCosts {
   input: number;
   output: number;
@@ -81,10 +84,11 @@ export const stringToAnkiCardsAsChat = async (
   input: string,
   key: string,
   prompt_templates: typeof DEFAULT_PROMPT_TEMPLATES,
-  language: string
+  language: string,
+  model: string
 ) => {
   const llm = new ChatOpenAI({
-    modelName: "gpt-3.5-turbo-0125",
+    modelName: model,
     callbacks: callbackCostCalc,
     openAIApiKey: key,
     //modelName: "gpt-4-0125-preview",
@@ -168,6 +172,7 @@ export const generateCardsAI = async (
   key: string,
   prompt_templates = DEFAULT_PROMPT_TEMPLATES,
   language: string,
+  model: string,
   SPLIT_OPTIONS = {
     chunkSize: 5000, // tested 2000
     chunkOverlap: 300, // tested 200
@@ -186,7 +191,7 @@ export const generateCardsAI = async (
   const cards = await Promise.all(
     docs.map(
       async (d) =>
-        await stringToAnkiCardsAsChat(d, key, prompt_templates, language)
+        await stringToAnkiCardsAsChat(d, key, prompt_templates, language, model)
     )
   );
 
@@ -211,10 +216,11 @@ export const updateAnkiCard = async (
   changeRequest = "Retry with another formulation",
   key: string,
   prompt_templates = DEFAULT_PROMPT_TEMPLATES,
-  language: string
+  language: string,
+  model: string
 ) => {
   const llm = new ChatOpenAI({
-    modelName: "gpt-3.5-turbo-0125",
+    modelName: model,
     openAIApiKey: key,
     verbose: true,
     //modelName: "gpt-4-0125-preview",

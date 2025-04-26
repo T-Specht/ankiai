@@ -75,6 +75,8 @@ function Index() {
   const setPromptTemplates = useSettingsStore.use.setPromptTemplates();
   const setGenerateHotkey = useSettingsStore.use.setGenerateHotkey();
   const generateHotkey = useSettingsStore.use.generateHotkey();
+  const modelName = useSettingsStore.use.modelName();
+  const setModelName = useSettingsStore.use.setModelName();
 
   const [accumulatedCost, setAccumulatedCosts] = useLocalStorage(
     "accumulatedCosts",
@@ -90,6 +92,17 @@ function Index() {
   return (
     <div className="space-y-3">
       <KeyInput></KeyInput>
+
+      <div className="grid w-full items-center gap-1.5 text-left">
+        <Label htmlFor="modelName">Open AI Model</Label>
+        <Input
+          type="text"
+          id="modelName"
+          placeholder="gpt-3.5-turbo-0125"
+          value={modelName}
+          onChange={(e) => setModelName(e.target.value)}
+        />
+      </div>
 
       <div>
         <Button onClick={toggle}>

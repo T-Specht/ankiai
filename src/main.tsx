@@ -4,7 +4,7 @@ import {
   isPermissionGranted,
   requestPermission,
   sendNotification,
-} from "@tauri-apps/api/notification";
+} from "@tauri-apps/plugin-notification";
 
 import "./index.css";
 
@@ -12,8 +12,8 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode, useEffect } from "react";
-import { register, unregister } from "@tauri-apps/api/globalShortcut";
-import { readText } from "@tauri-apps/api/clipboard";
+import { register, ShortcutEvent, unregister } from "@tauri-apps/plugin-global-shortcut";
+import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { generateCardsAI } from "./utils/card_chain";
 import {
   CardJob,
@@ -72,9 +72,10 @@ isPermissionGranted().then(async (permissionGranted) => {
   }
 });
 
-const newJob = async () => {
+const newJob = async (event: ShortcutEvent) => {
+  if(event.state == 'Pressed') return; // Only run when key is released
   const clipText = await readText();
-  const { openAIKey, promptTemplates, primaryLanguage } =
+  const { openAIKey, promptTemplates, primaryLanguage, modelName } =
     useSettingsStore.getState();
 
   const { addJob, removeJob, addCards } = useCardsStore.getState();
@@ -98,8 +99,11 @@ const newJob = async () => {
         clipText,
         openAIKey,
         promptTemplates,
-        primaryLanguage
+        primaryLanguage,
+        modelName
       );
+
+      console.log("Model: ", modelName);
 
       console.log(cards);
       sendNotification({

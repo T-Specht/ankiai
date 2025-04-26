@@ -26,6 +26,7 @@ export const ChangeCardDialog = (props: {
   // const { promptTemplates, primaryLanguage } = useAppContext();
   const primaryLanguage = useSettingsStore.use.primaryLanguage();
   const promptTemplates = useSettingsStore.use.promptTemplates();
+  const modelName = useSettingsStore.use.modelName();
   const [open, setOpen] = useState(false);
 
   const changeCardMutation = useMutation({
@@ -35,7 +36,8 @@ export const ChangeCardDialog = (props: {
         action,
         props.openAIKey,
         promptTemplates,
-        primaryLanguage
+        primaryLanguage,
+        modelName
       );
     },
     onSettled(data) {
