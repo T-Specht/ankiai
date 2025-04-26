@@ -1,9 +1,9 @@
-# <img src="./app-icon.png" width="50"> AnkiAI
 
+# AnkiAI
 ✨ AI‑assisted flashcard generator for Anki powered by OpenAI and Tauri.
 
 <p>
-  <img src="./screenshots/cards.png" alt="AnkiAI home window" width="800">
+  <img src="./screenshots/hero.png" alt="AnkiAI home window" width="800">
 </p>
 
 ## Why AnkiAI?
