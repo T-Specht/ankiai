@@ -48,7 +48,7 @@ personal learning style and study goals.
 
 ```bash
 # clone
-git clone https://github.com/your-name/ankiai-tauri.git
+git clone https://github.com/T-Specht/ankiai
 cd ankiai-tauri
 
 # install dependencies
